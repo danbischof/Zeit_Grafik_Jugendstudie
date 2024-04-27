@@ -14,7 +14,7 @@ head(data)
 
 # Ich kenne die Daten nicht und habe keinen Zugang. 
 ## Ich weiß: 2042 Respondents sind in den Daten. Die verteile ich nahezu identisch über drei Jahre:
-total_befrage <- c("2022" = 680, "2023" = 681, "2024" = 681)  
+total_befrage <- c("2022" = 2000, "2023" = 2000, "2024" = 2000)  
 ### Annahme kann falsch sein. Sofern ja, bitte korrigierne. 
 
 
