@@ -112,24 +112,4 @@ fig3 <- ggplot(data_filtered, aes(x=jahr, y=prozent, group=partei, color=partei)
 ggsave("fig3.pdf", plot = fig3, device = "pdf")
 
 
-# Wir könnten noch P-values rechnen: 
-results <- data %>%
-  filter(partei %in% c("AfD", "Grüne")) %>%
-  group_by(jahr) %>%
-  summarise(
-    p1 = prozent_decimal[partei == "AfD"],
-    n1 = N[partei == "AfD"],
-    p2 = prozent_decimal[partei == "Grüne"],
-    n2 = N[partei == "Grüne"],
-    pooled_p = (p1 * n1 + p2 * n2) / (n1 + n2),
-    se = sqrt(pooled_p * (1 - pooled_p) * (1/n1 + 1/n2)),
-    z = (p1 - p2) / se
-  ) %>%
-  mutate(
-    p_value = 2 * pnorm(abs(z), lower.tail = FALSE)  # Two-tailed test
-  )
-
-# Nix los in 2024: 
-print(results)
-
 
