@@ -53,13 +53,20 @@ ggsave("fig1_original.pdf", plot = fig1, device = "pdf")
 
 # Ok, wir können 95% CIs rechnen: 
 ## wir wissen die Prozent 
-data <- data %>% 
+total_by_year <- data %>%
+  group_by(jahr) %>%
+  summarize(total_befragte = sum(N, na.rm = TRUE))
+
+# Join this summary back to the original data to have total respondents per year
+data <- data %>%
+  left_join(total_by_year, by = "jahr") %>%
   mutate(
-    prozent_decimal = prozent / 100,  
-    SE = sqrt(prozent_decimal * (1 - prozent_decimal) / N),
-    CI_lower = prozent - (1.96 * SE * 100),  
-    CI_upper = prozent + (1.96 * SE * 100)   
+    prozent_decimal = prozent / 100,  # Convert percentages to decimals
+    SE = sqrt(prozent_decimal * (1 - prozent_decimal) / total_befragte),  # Calculate standard error using total respondents per year
+    CI_lower = prozent - (1.96 * SE * 100),  # Lower bound of 95% CI
+    CI_upper = prozent + (1.96 * SE * 100)   # Upper bound of 95% CI
   )
+
 
 # Ok, nun geben wir das in die Grafik ein: 
 fig2 <- ggplot(data, aes(x=jahr, y=prozent, group=partei, color=partei)) +
@@ -84,7 +91,6 @@ ggsave("fig2.pdf", plot = fig2, device = "pdf")
 ## überlappt sehr viel 
 
 # nur AfD und Grüne: 
-# Filter the data for only "AfD" and "Grüne"
 data_filtered <- data %>% filter(partei %in% c("AfD", "Grüne"))
 
 # Create the line plot for only "AfD" and "Grüne"
