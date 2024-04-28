@@ -1,1 +1,1 @@
-Reproduziert diese Grafik: https://www.zeit.de/gesellschaft/2024-04/jugendstudie-deutschland-jugend-afd-zustimmung Und versucht basierend auf der Anname, dass N=2000 für jedes Jahr befragt wurden + 95% CIs zur Grafik hinzuzufügen.
+Reproduziert diese Grafik: https://www.zeit.de/gesellschaft/2024-04/jugendstudie-deutschland-jugend-afd-zustimmung Und versucht basierend auf der Anname, dass N=2042 für jedes Jahr befragt wurden + 95% CIs zur Grafik hinzuzufügen.
