@@ -18,7 +18,7 @@ data <- data %>%
 
 # Ich kenne die Daten nicht und habe keinen Zugang. 
 ## Ich weiß: 2042 Respondents sind in den Daten. Die verteile ich nahezu identisch über drei Jahre:
-total_befrage <- c("2022" = 2000, "2023" = 2000, "2024" = 2000)  
+total_befrage <- c("2022" = 2042, "2023" = 2042, "2024" = 2042)  
 ### Annahme kann falsch sein. Sofern ja, bitte korrigierne. 
 
 # Nun kann ich ungefähr von Prozent zu total kommen. 
