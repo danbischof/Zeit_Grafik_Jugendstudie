@@ -123,3 +123,16 @@ data_100 <- data_100 %>%
 
 ## das könnte hinhauen! 
 ## ich brauche das aber im Grunde nicht neu berechnen, weil ich sowieso auf % gerechnet habe. Sollte sich nix. verändern.
+
+# Ich kenne die Daten nicht und habe keinen Zugang. 
+## Ich weiß: 2042 Respondents sind in den Daten. Die verteile ich nahezu identisch über drei Jahre:
+total_befrage <- c("2022" = 2042, "2023" = 2042, "2024" = 2042)  
+### Annahme kann falsch sein. Sofern ja, bitte korrigierne. 
+
+# Nun kann ich ungefähr von Prozent zu total kommen. 
+## ABER: Klar geht sich das nicht aus, es wird Kommastellen geben. Ich runde also. 
+data_100 <- data_100 %>%
+  mutate(
+    N = round(prozent / 100 * total_befrage[as.character(jahr)])
+  )
+
