@@ -106,3 +106,20 @@ fig3 <- ggplot(data_filtered, aes(x=jahr, y=prozent, group=partei, color=partei)
 ggsave("fig3.pdf", plot = fig3, device = "pdf")
 
 
+#Ok. Wir könnten mal annehmen, dass weiß nicht und keine Stimme aus einer anderen Variable kommen. 
+## -> Auch dann verstehe ich nicht wieso man nicht auf 100 Prozent geht. 
+
+data_100 <- data %>%
+  filter(!partei %in% c("Weiß nicht", "keine Stimme")) %>%
+  select(-total_prozent, -N, -SE, -CI_lower, -CI_upper)
+
+# Nun nochmal alles neu: 
+
+# Summe Prozent pro Jahr sollte 100 sein: 
+data_100 <- data_100 %>%
+  group_by(jahr) %>%
+  mutate(total_prozent = sum(prozent)) %>%
+  ungroup() 
+
+## das könnte hinhauen! 
+## ich brauche das aber im Grunde nicht neu berechnen, weil ich sowieso auf % gerechnet habe. Sollte sich nix. verändern.
