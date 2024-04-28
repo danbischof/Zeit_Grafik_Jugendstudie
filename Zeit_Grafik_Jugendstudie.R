@@ -3,21 +3,23 @@ library(dplyr)
 library(ggplot2)
 
 
-# Load the data
+# Daten basieren auf der Grafik im Artikel. 
+## Ich habe keinen Zugang zu den Daten, ich habe die Prozent aus der Grafik übernommen. 
 excel_path <- "data.xlsx"
 data <- read_excel(excel_path)
 
-# View the first few rows of the data
-str(data)
-head(data)
+# Summe Prozent pro Jahr sollte 100 sein: 
+data <- data %>%
+  group_by(jahr) %>%
+  mutate(total_prozent = sum(prozent)) %>%
+  ungroup() 
 
+## Ist sie aber nicht. Das muss falsch sein.
 
 # Ich kenne die Daten nicht und habe keinen Zugang. 
 ## Ich weiß: 2042 Respondents sind in den Daten. Die verteile ich nahezu identisch über drei Jahre:
 total_befrage <- c("2022" = 2000, "2023" = 2000, "2024" = 2000)  
 ### Annahme kann falsch sein. Sofern ja, bitte korrigierne. 
-
-
 
 # Nun kann ich ungefähr von Prozent zu total kommen. 
 ## ABER: Klar geht sich das nicht aus, es wird Kommastellen geben. Ich runde also. 
@@ -44,29 +46,21 @@ fig1 <- ggplot(data, aes(x=jahr, y=prozent, group=partei, color=partei)) +
   ) +
   scale_x_continuous(breaks = unique(data$jahr)) +  # Set breaks at unique years
   scale_y_continuous(limits = c(0, NA)) +  # Start y-axis at 0
-  scale_color_manual(values = c("Grüne" = "green", "Weiß nicht" = "grey50", "Union" = "black", 
-                                "keine Stimme" = "blue", "FDP" = "yellow", "Linke" = "purple", 
-                                "SPD" = "red", "AfD" = "lightblue", "BSW" = "pink", "Sonstige" = "cyan"))
+  scale_color_manual(values = c("Grüne" = "green", "Weiß nicht" = "grey50", "CDU/CSU" = "black", 
+                                "keine Stimme" = "red", "FDP" = "yellow", "Linke" = "purple", 
+                                "SPD" = "blue", "AfD" = "lightblue", "BSW" = "pink", "Sonstige" = "cyan"))
 
 ggsave("fig1_original.pdf", plot = fig1, device = "pdf")
 
-
 # Ok, wir können 95% CIs rechnen: 
 ## wir wissen die Prozent 
-total_by_year <- data %>%
-  group_by(jahr) %>%
-  summarize(total_befragte = sum(N, na.rm = TRUE))
-
-# Ok, nun kann man SE rechnen und CI drumrumlegen:
-data <- data %>%
-  left_join(total_by_year, by = "jahr") %>%
+data <- data %>% 
   mutate(
-    prozent_decimal = prozent / 100, 
-    SE = sqrt(prozent_decimal * (1 - prozent_decimal) / total_befragte), # SE
-    CI_lower = prozent - (1.96 * SE * 100),  # Lower95% CI
-    CI_upper = prozent + (1.96 * SE * 100)   # Upper 95% CI
+    prozent_decimal = prozent / 100,  
+    SE = sqrt(prozent_decimal * (1 - prozent_decimal) / N),
+    CI_lower = prozent - (1.96 * SE * 100),  
+    CI_upper = prozent + (1.96 * SE * 100)   
   )
-
 
 # Ok, nun geben wir das in die Grafik ein: 
 fig2 <- ggplot(data, aes(x=jahr, y=prozent, group=partei, color=partei)) +
@@ -82,9 +76,9 @@ fig2 <- ggplot(data, aes(x=jahr, y=prozent, group=partei, color=partei)) +
   ) +
   scale_x_continuous(breaks = unique(data$jahr), expand = c(0, 0)) +  # Set breaks at unique years, remove expansion
   scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +  # Start y-axis at 0, remove expansion
-scale_color_manual(values = c("Grüne" = "green", "Weiß nicht" = "grey50", "Union" = "black", 
-                              "keine Stimme" = "blue", "FDP" = "yellow", "Linke" = "purple", 
-                              "SPD" = "red", "AfD" = "lightblue", "BSW" = "pink", "Sonstige" = "cyan"))
+scale_color_manual(values = c("Grüne" = "green", "Weiß nicht" = "grey50", "CDU/CSU" = "black", 
+                              "keine Stimme" = "red", "FDP" = "yellow", "Linke" = "purple", 
+                              "SPD" = "blue", "AfD" = "lightblue", "BSW" = "pink", "Sonstige" = "cyan"))
 
 ggsave("fig2.pdf", plot = fig2, device = "pdf")
 
@@ -93,7 +87,7 @@ ggsave("fig2.pdf", plot = fig2, device = "pdf")
 # nur AfD und Grüne: 
 data_filtered <- data %>% filter(partei %in% c("AfD", "Grüne"))
 
-# Nur "AfD" und "Grüne" mit 95 CIs 
+# Create the line plot for only "AfD" and "Grüne"
 fig3 <- ggplot(data_filtered, aes(x=jahr, y=prozent, group=partei, color=partei)) +
   geom_line() +
   geom_point() +
@@ -110,6 +104,5 @@ fig3 <- ggplot(data_filtered, aes(x=jahr, y=prozent, group=partei, color=partei)
   scale_color_manual(values = c("AfD" = "lightblue", "Grüne" = "green"))  # Define colors for "AfD" and "Grüne"
 
 ggsave("fig3.pdf", plot = fig3, device = "pdf")
-
 
 
